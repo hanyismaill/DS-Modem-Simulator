@@ -10,16 +10,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TextView t = new TextView(this);
-        t.setBackgroundColor(0xFF000000);
-        t.setTextColor(0xFFFFFFFF);
-        t.setTextSize(14);
+        TextView tv = new TextView(this);
+        tv.setText("iDIRECT Modem Virtualization\n\nReady...");
+        tv.setTextColor(0xFFFFFFFF);
+        tv.setBackgroundColor(0xFF000000);
+        tv.setPadding(20,20,20,20);
 
-        t.setText(
-            "iDIRECT Modem Virtualization\n\n" +
-            "Starting system...\n"
-        );
-
-        setContentView(t);
+        setContentView(tv);
     }
 }
