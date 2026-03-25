@@ -1,6 +1,7 @@
 package com.ds.modem;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.LinearLayout;
@@ -30,20 +31,30 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(layout);
 
-        input.setOnEditorActionListener((v, actionId, event) -> {
-            String text = input.getText().toString();
+        // ENTER key listener (FIXED)
+        input.setOnKeyListener((v, keyCode, event) -> {
+            if (event.getAction() == KeyEvent.ACTION_DOWN &&
+                keyCode == KeyEvent.KEYCODE_ENTER) {
 
-            if (stage == 0) {
-                screen.append("\n" + text + "\nPassword:");
-                input.setText("");
-                stage = 1;
-            } else if (stage == 1) {
-                screen.append("\n****\n\nAccess Granted\n> ");
-                input.setText("");
-                stage = 2;
+                handleInput();
+                return true;
             }
-
-            return true;
+            return false;
         });
+    }
+
+    private void handleInput() {
+        String text = input.getText().toString();
+
+        if (stage == 0) {
+            screen.append("\n" + text + "\nPassword:");
+            input.setText("");
+            stage = 1;
+
+        } else if (stage == 1) {
+            screen.append("\n****\n\nAccess Granted\n> ");
+            input.setText("");
+            stage = 2;
+        }
     }
 }
