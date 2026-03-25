@@ -1,48 +1,35 @@
-import android.app.Activity;
+package com.ds.modem;
+
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
-    TextView terminal;
-
-    String buffer = "";
-    String username = "";
-    String password = "";
-
-    int stage = 0; // 0=username, 1=password, 2=CLI
+    TextView screen;
+    int stage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        terminal = new TextView(this);
-        terminal.setTextColor(0xFFFFFFFF);
-        terminal.setBackgroundColor(0xFF000000);
-        terminal.setTextSize(14);
-        terminal.setPadding(20,20,20,20);
+        screen = new TextView(this);
+        screen.setTextColor(0xFFFFFFFF);
+        screen.setBackgroundColor(0xFF000000);
+        screen.setTextSize(16);
+        screen.setPadding(20, 40, 20, 20);
 
-        setContentView(terminal);
+        setContentView(screen);
 
-        print("Username: ");
+        startCLI();
     }
 
-    void print(String s) {
-        terminal.append(s);
+    private void startCLI() {
+        if (stage == 0) {
+            screen.setText("Username: admin\nPassword: ");
+            stage = 1;
+        } else if (stage == 1) {
+            screen.append("\n\n[RMT:17231] admin@telnet:127.0.0.1;4494\n");
+        }
     }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        char c = (char) event.getUnicodeChar();
-
-        if (keyCode == KeyEvent.KEYCODE_ENTER) {
-
-            if (stage == 0) {
-                username = buffer;
-                buffer = "";
-                print("\nPassword: ");
-                stage = 1;
-            }
-            else if (stage == 1) {
+}
