@@ -1,15 +1,17 @@
 package com.ds.modem;
 
 import android.os.Bundle;
-import android.widget.TextView;
+import android.text.InputType;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView screen;
+    EditText screen;
     StringBuilder buffer = new StringBuilder();
 
-    int stage = 0; // 0=username, 1=password, 2=logged in
+    int stage = 0;
     String username = "";
     String password = "";
 
@@ -17,9 +19,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        screen = new TextView(this);
+        screen = new EditText(this);
         screen.setTextSize(18);
         screen.setPadding(20, 40, 20, 20);
+        screen.setInputType(InputType.TYPE_CLASS_TEXT);
+        screen.setSingleLine(false);
 
         screen.setText(
                 "iDIRECT Modem Virtualization\n\n" +
@@ -29,51 +33,34 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(screen);
 
-        // Capture typing
-        screen.setOnKeyListener((v, keyCode, event) -> {
-            if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
+        // Force keyboard to open
+        screen.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        imm.showSoftInput(screen, InputMethodManager.SHOW_IMPLICIT);
 
-                char c = (char) event.getUnicodeChar();
-
-                if (keyCode == android.view.KeyEvent.KEYCODE_ENTER) {
-                    handleInput();
-                    return true;
-                }
-
-                if (Character.isLetterOrDigit(c)) {
-                    buffer.append(c);
-
-                    if (stage == 1) {
-                        // hide password
-                        screen.append("*");
-                    } else {
-                        screen.append(String.valueOf(c));
-                    }
-                }
-            }
+        screen.setOnEditorActionListener((v, actionId, event) -> {
+            handleInput();
             return true;
         });
     }
 
     void handleInput() {
 
+        String input = screen.getText().toString().trim();
+
         if (stage == 0) {
-            username = buffer.toString();
-            buffer.setLength(0);
+            username = input.substring(input.lastIndexOf("Username:") + 9).trim();
 
             screen.append("\nPassword: ");
             stage = 1;
         }
 
         else if (stage == 1) {
-            password = buffer.toString();
-            buffer.setLength(0);
+            password = input.substring(input.lastIndexOf("Password:") + 9).trim();
 
             if (username.equals("admin") && password.equals("admin")) {
-
-                screen.append("\n\nAccess Granted\n>\n");
+                screen.append("\n\nAccess Granted\n>");
                 stage = 2;
-
             } else {
                 screen.append("\n\nAccess Denied\n\nUsername: ");
                 stage = 0;
@@ -81,11 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         else if (stage == 2) {
-            // simple command echo
-            String cmd = buffer.toString();
-            buffer.setLength(0);
-
-            screen.append("\nExecuted: " + cmd + "\n>");
+            screen.append("\nExecuted\n>");
         }
     }
-}
+                }
